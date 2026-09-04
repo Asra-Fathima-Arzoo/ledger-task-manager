@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ledger — Task Manager</title>
+<meta name="description" content="A simple, ledger-styled task manager. Add, edit, complete and prioritize your tasks, saved right in your browser.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="desk">
+
+  <header class="topbar">
+    <div class="wordmark">
+      <span class="wordmark-mark">§</span>
+      <div>
+        <h1>Ledger</h1>
+        <p class="tagline">Keep your obligations in order.</p>
+      </div>
+    </div>
+    <button class="btn btn-primary" id="openAddBtn" type="button">
+      <span aria-hidden="true">+</span> Add entry
+    </button>
+  </header>
+
+  <div class="book">
+
+    <!-- Sidebar / mobile filter chips -->
+    <nav class="ledger-tabs" aria-label="Filter entries">
+      <button class="tab is-active" data-filter="all">All <span class="count" id="count-all">0</span></button>
+      <button class="tab" data-filter="high">High <span class="count" id="count-high">0</span></button>
+      <button class="tab" data-filter="medium">Medium <span class="count" id="count-medium">0</span></button>
+      <button class="tab" data-filter="low">Low <span class="count" id="count-low">0</span></button>
+      <button class="tab" data-filter="completed">Completed <span class="count" id="count-completed">0</span></button>
+      <div class="tab-divider" role="separator"></div>
+      <label class="sort-label" for="sortSelect">Sort by</label>
+      <select id="sortSelect" class="sort-select">
+        <option value="created">Date added</option>
+        <option value="priority">Priority</option>
+        <option value="due">Due date</option>
+        <option value="alpha">Title (A–Z)</option>
+      </select>
+    </nav>
+
+    <!-- Main ledger sheet -->
+    <main class="sheet" aria-live="polite">
+      <div class="sheet-head">
+        <h2 id="sheetTitle">All entries</h2>
+        <p class="sheet-sub" id="sheetSub">0 entries</p>
+      </div>
+
+      <ul class="entries" id="entries"></ul>
+
+      <div class="empty-state" id="emptyState" hidden>
+        <p class="empty-title">No entries yet.</p>
+        <p class="empty-sub">Add your first task to start the ledger.</p>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- Add / Edit entry panel -->
+<div class="scrim" id="scrim" hidden></div>
+<aside class="panel" id="panel" hidden aria-labelledby="panelTitle" role="dialog" aria-modal="true">
+  <form id="entryForm" novalidate>
+    <div class="panel-head">
+      <h2 id="panelTitle">New entry</h2>
+      <button type="button" class="icon-btn" id="closePanelBtn" aria-label="Close">&times;</button>
+    </div>
+
+    <input type="hidden" id="entryId">
+
+    <label class="field">
+      <span>Title</span>
+      <input type="text" id="entryTitle" maxlength="120" placeholder="What needs doing?" required>
+      <span class="field-error" id="titleError" hidden>A title is required.</span>
+    </label>
+
+    <label class="field">
+      <span>Notes <em>(optional)</em></span>
+      <textarea id="entryNotes" rows="3" maxlength="500" placeholder="Any details worth remembering"></textarea>
+    </label>
+
+    <div class="field-row">
+      <fieldset class="field priority-field">
+        <legend>Priority</legend>
+        <div class="priority-options">
+          <label class="priority-option priority-high">
+            <input type="radio" name="priority" value="high">
+            <span>High</span>
+          </label>
+          <label class="priority-option priority-medium">
+            <input type="radio" name="priority" value="medium" checked>
+            <span>Medium</span>
+          </label>
+          <label class="priority-option priority-low">
+            <input type="radio" name="priority" value="low">
+            <span>Low</span>
+          </label>
+        </div>
+      </fieldset>
+
+      <label class="field">
+        <span>Due date <em>(optional)</em></span>
+        <input type="date" id="entryDue">
+      </label>
+    </div>
+
+    <div class="panel-actions">
+      <button type="button" class="btn btn-ghost" id="deleteBtn" hidden>Delete entry</button>
+      <div class="panel-actions-right">
+        <button type="button" class="btn btn-ghost" id="cancelBtn">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="saveBtn">Save entry</button>
+      </div>
+    </div>
+  </form>
+</aside>
+
+<!-- Row template -->
+<template id="entryTemplate">
+  <li class="entry" data-id="">
+    <button class="check" type="button" aria-pressed="false" aria-label="Mark complete"></button>
+    <div class="entry-main">
+      <p class="entry-title"></p>
+      <p class="entry-notes"></p>
+    </div>
+    <span class="swatch" aria-hidden="true"></span>
+    <span class="entry-priority"></span>
+    <span class="entry-due"></span>
+    <div class="entry-actions">
+      <button class="icon-btn edit-btn" type="button" aria-label="Edit entry">✎</button>
+      <button class="icon-btn delete-btn" type="button" aria-label="Delete entry">🗑</button>
+    </div>
+  </li>
+</template>
+
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<script src="app.js"></script>
+</body>
+</html>
